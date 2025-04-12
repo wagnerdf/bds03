@@ -24,9 +24,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 	
 	private static final String[] PUBLIC = { "/oauth/token", "/h2-console/**" };
 	
-	private static final String[] OPERATOR_OR_ADMIN = { "/products/**", "/categories/**" };	
-	
-	private static final String[] ADMIN = { "/users/**" };
+	private static final String[] OPERATOR_GET = { "/departments/**", "/employees/**" };	
 	
 	@Override
 	public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
@@ -43,10 +41,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 		}
 		
 		http.authorizeRequests() //iniciar as configurações de autorizações
-		.antMatchers(PUBLIC).permitAll() //Define autoriza~çoes de rota PUBLIC
-		.antMatchers(HttpMethod.GET, OPERATOR_OR_ADMIN).permitAll() //Liberar o metodo GET para o vetor OPERATOR_OR_ADMIN
-		.antMatchers(OPERATOR_OR_ADMIN).hasAnyRole("OPERATOR", "ADMIN")//As rotas do vetor OPERATOR_OR_ADMIN tera acesso que tiver os Role "OPERADOR" ou "ADMIN." 
-		.antMatchers(ADMIN).hasRole("ADMIN")//O vetor ADMIN só pode acessar que tiver logado com perfil "ADMIN"
-		.anyRequest().authenticated();//Qualquer outra rota não especificada tem que tar logado, não importa o perfil de usuário.
+		.antMatchers(PUBLIC).permitAll() //Define autoriza~çoes de rota PUBLIC, permitindo tudo
+		.antMatchers(HttpMethod.GET, OPERATOR_GET).hasAnyRole("OPERATOR","ADMIN") //Liberar o metodo GET para o vetor OPERATOR_GET
+		.anyRequest().hasAnyRole("ADMIN");
 	}
 }
